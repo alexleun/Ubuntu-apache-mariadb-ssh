@@ -36,7 +36,7 @@ The SSH server allows for secure remote access to your environment via terminal 
    First, clone this repository into a directory of your choice:
 
    ```bash
-   git clone <repository-url>
+   git clone alexleun/Ubuntu-apache-mariadb-ssh
    cd Ubuntu-apache-mariadb-ssh
    ```
 
