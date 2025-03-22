@@ -2,3 +2,11 @@ docker build -t my-apache-mariadb-image .
 
 docker run -d -p 80:80 -p 3306:3306 -p 22:22 -v db:/var/lib/mysql -v html:/var/www/html  my-apache-mariadb-image
 
+// in docker exec linux shell, run below:
+
+# mariadb-secure-installation
+# apt-get update
+# apt-get install phpmyadmin
+
+// reboot your image
+// you can now access your database http://localhost/phpmyadmin
