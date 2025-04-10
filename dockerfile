@@ -24,7 +24,7 @@ RUN sed -i 's/PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/ss
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 # Expose ports 80 (Apache) and 3306 (MariaDB)
-EXPOSE 80 3306 22
+EXPOSE 80 3306 22 443
 
 # Start supervisord when the container starts
 CMD ["/usr/bin/supervisord"]
