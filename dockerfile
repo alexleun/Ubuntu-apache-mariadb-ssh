@@ -3,7 +3,7 @@ FROM ubuntu:latest
 
 # Install Apache, MariaDB, and Supervisor
 RUN apt-get update && \
-    apt-get install -y apache2 php mariadb-server supervisor openssh-server
+    apt-get install -y apache2 php mariadb-server supervisor openssh-server nano
 
 # SSH Configuration
 # Create SSH directory
