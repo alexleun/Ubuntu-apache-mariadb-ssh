@@ -10,3 +10,67 @@ docker run -d -p 80:80 -p 3306:3306 -p 22:22 -v db:/var/lib/mysql -v html:/var/w
 
 // reboot your image
 // you can now access your database http://localhost/phpmyadmin
+
+// below command added for https:// ssl support in apache2
+
+mkdir ~/cert
+cd ~/cert
+//sudo openssl genrsa -aes128 -out private.key 2048
+//openssl genpkey -algorithm RSA -out private.key -aes128 -pass pass:
+//openssl req -x509 -nodes -newkey rsa:2048 -keyout private.key -out certificate.crt -days 3650
+
+openssl genrsa -out private.key 2048
+openssl req -new -days 3650 -key private.key -out request.csr
+openssl x509 -in request.csr -out certificate.crt -req -signkey private.key -days 3650
+sudo mkdir /etc/cert
+sudo mv certificate.crt /etc/cert/.
+sudo mv private.key /etc/cert/.
+sudo nano /etc/apache2/conf-available/ssl-params.conf
+~~~~~~~~~~~~~~~~
+SSLCipherSuite EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH
+    SSLProtocol All -SSLv2 -SSLv3 -TLSv1 -TLSv1.1
+    SSLHonorCipherOrder On
+    Header always set X-Frame-Options DENY
+    Header always set X-Content-Type-Options nosniff
+    # Requires Apache >= 2.4
+    SSLCompression off
+    SSLUseStapling on
+    SSLStaplingCache "shmcb:logs/stapling-cache(150000)"
+    # Requires Apache >= 2.4.11
+    SSLSessionTickets Off
+~~~~~~~~~~~~~~~~
+sudo nano /etc/apache2/sites-available/default-ssl.conf
+~~~~~~~~~~~
+                SSLCertificateFile      /etc/cert/certificate.crt
+                SSLCertificateKeyFile /etc/cert/private.key
+~~~~~~~~~~~
+sudo a2enmod ssl
+sudo a2enmod headers
+sudo a2enconf ssl-params
+sudo a2ensite default-ssl
+sudo apache2ctl configtest
+sudo systemctl restart apache2
+sudo apt-get install php
+sudo apt-get install mariadb-server
+sudo mariadb-secure-installation
+sudo apt-get install phpmyadmin
+mysql -u root -p
+
+sudo nano /var/www/html/.htaccess
+~~~~~~~~~~~~~~~~~~~~~~~
+AuthType Basic
+AuthName "Restricted Area"
+AuthUserFile /etc/apache2/.htpasswd
+Require valid-user
+~~~~~~~~~~~~~~~~~~~~~~~
+sudo chmod 644   /var/www/html/.htaccess
+cd /etc/apache2/
+sudo htpasswd -c .htpasswd username
+sudo nano /etc/apache2/apache2.conf
+ ~~~~~~~~~~~~~~~~~~~~~~~
+<Directory /var/www/>
+    AllowOverride All
+    Require all granted
+</Directory>
+ ~~~~~~~~~~~~~~~~~~~~~~~
+sudo systemctl restart apache2
