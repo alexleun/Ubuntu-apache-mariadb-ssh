@@ -1,0 +1,10 @@
+# /etc/ssh/sshd_config (minimal configuration for Docker)
+Port 22
+PermitRootLogin no
+PasswordAuthentication yes
+ChallengeResponseAuthentication no
+UsePAM yes
+X11Forwarding yes
+PrintMotd no
+AcceptEnv LANG LC_CTYPE LC_NUMERIC LC_TIME LC_COLLATE LC_MONETARY LC_MESSAGES
+Subsystem sftp /usr/libexec/openssh/sftp-server

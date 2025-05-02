@@ -1,0 +1,33 @@
+# Use official CentOS 10 image as base
+FROM quay.io/centos/centos:10
+
+# Install necessary packages including mod_ssl, supervisord, and MariaDB
+RUN dnf install -y \
+    httpd \
+    mod_ssl \ 
+    mariadb-server \
+    openssh-server \
+    php \
+    php-mysqlnd \
+    openssl \
+    supervisor \
+    && dnf clean all
+
+# Create admin user in wheel group
+RUN useradd -m -g wheel admin && \
+    echo "admin:password123" | chpasswd
+
+# Configure SSHD with absolute path and generate host keys
+RUN ssh-keygen -A
+COPY sshd_config /etc/ssh/sshd_config
+EXPOSE 22
+
+# Generate self-signed SSL certificates for Apache (10 years)
+RUN openssl req -x509 -nodes -days 3650 -newkey rsa:4096 \
+    -keyout /etc/pki/tls/private/apache.key \
+    -out /etc/pki/tls/certs/apache.crt
+
+# Generate self-signed SSL certificates for MariaDB (10 years)
+RUN openssl req -x509 -nodes -days 3650 -newkey rsa:4096 \
+    -keyout /etc/mysql/ssl.key \
+    -out /

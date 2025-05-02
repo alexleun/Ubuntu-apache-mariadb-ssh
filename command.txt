@@ -74,3 +74,14 @@ sudo nano /etc/apache2/apache2.conf
 </Directory>
  ~~~~~~~~~~~~~~~~~~~~~~~
 sudo systemctl restart apache2
+
+
+// Change mariadb config to allow host computer connection
+sudo nano /etc/mysql/mariadb.conf.d/50-server.cnf
+line 28:
+ ~~~~~~~~~~~~~~~~~~~~~~~
+bind-address            = 0.0.0.0
+ ~~~~~~~~~~~~~~~~~~~~~~~
+sudo service mariadb restart
+
+
